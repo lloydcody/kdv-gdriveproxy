@@ -17,7 +17,7 @@ for (const envVar of requiredEnvVars) {
 // Parse CORS origins
 const corsOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
-  : ['http://localhost:5173'];
+  : ['*'];
 
 export const config = {
   port: process.env.PORT || 3000,
