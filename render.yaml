@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: document-viewer-api
+    env: node
+    buildCommand: npm install
+    startCommand: node server/index.js
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: GOOGLE_CLIENT_EMAIL
+        sync: false
+      - key: GOOGLE_PRIVATE_KEY
+        sync: false
+      - key: GOOGLE_FOLDER_ID
+        sync: false
+      - key: CORS_ORIGIN
+        value: https://helpful-manatee-1073af.netlify.app
