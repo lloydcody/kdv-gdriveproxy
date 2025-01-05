@@ -15,6 +15,7 @@ export class DriveService {
       key: config.credentials.private_key,
       scopes: ['https://www.googleapis.com/auth/drive.readonly']
     });
+
     this.drive = google.drive({ version: 'v3', auth: this.auth });
   }
 
@@ -83,5 +84,52 @@ export class DriveService {
     }
   }
 
-  // ... rest of the class implementation remains the same ...
+  async getFile(fileId) {
+    if (!fileId) {
+      logger.error('Missing file ID');
+      throw new Error('File ID is required');
+    }
+
+    try {
+      logger.info('Getting file', { fileId });
+      const response = await this.drive.files.get({
+        fileId,
+        alt: 'media'
+      }, { responseType: 'stream' });
+
+      if (!response || !response.data) {
+        logger.error('File not found or empty response', null, { fileId });
+        throw new Error('File not found');
+      }
+
+      return response;
+    } catch (error) {
+      logger.error('Error getting file', error, { fileId });
+      throw new Error(`Failed to get file: ${error.message}`);
+    }
+  }
+
+  async getThumbnail(fileId) {
+    if (!fileId) {
+      logger.error('Missing file ID');
+      throw new Error('File ID is required');
+    }
+
+    try {
+      logger.info('Getting thumbnail URL', { fileId });
+      const response = await this.drive.files.get({
+        fileId,
+        fields: 'thumbnailLink'
+      });
+
+      if (!response.data?.thumbnailLink) {
+        throw new Error('No thumbnail available for this file');
+      }
+
+      return response.data.thumbnailLink;
+    } catch (error) {
+      logger.error('Error getting thumbnail URL', error, { fileId });
+      throw new Error(`Failed to get thumbnail: ${error.message}`);
+    }
+  }
 }
